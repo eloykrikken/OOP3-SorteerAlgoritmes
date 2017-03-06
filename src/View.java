@@ -16,6 +16,7 @@ import javafx.stage.Stage;
  */
 public class View extends Application {
 
+
     public void start(Stage primaryStage){
 
         BorderPane borderPane = new BorderPane();
@@ -33,12 +34,10 @@ public class View extends Application {
         Button mergeSort = new Button("MergeSort");
         Button insertionSort = new Button("InsertionSort");
 
-
+        /*
         bubbleSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                controller.bubbleSort();
-            }
+            public void handle(ActionEvent event) { controller.bubbleSort(); }
         });
         mergeSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -48,6 +47,7 @@ public class View extends Application {
             @Override
             public void handle(ActionEvent event) { controller.insertionSort(); }
         });
+        */
 
         vbox.getChildren().addAll(bubbleSort, mergeSort, insertionSort);
         hbox.getChildren().addAll(nLabel,nValue);
