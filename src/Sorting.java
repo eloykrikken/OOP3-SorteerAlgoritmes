@@ -8,5 +8,7 @@ public class Sorting {
 
         Controller controller = new Controller(view, model);
 
+        //LUL
+
     }
 }
