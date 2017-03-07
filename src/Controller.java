@@ -13,18 +13,24 @@ public class Controller {
 
     }
 
-    public void bubbleSort(int n){
+    public int[] bubbleSort(int n){
         //System.out.println("bubbleSort "+n);
-        model.doBubbleSort(model.createArray(n));
+        int[] array = model.createArray(n);
+        model.doBubbleSort(array);
+        return array;
 
     }
-    public void mergeSort(int n){
+    public int[] mergeSort(int n){
         //System.out.println("mergeSort");
-        model.createArray(n);
+        int[] array = model.createArray(n);
+        model.doBubbleSort(array);
+        return array;
     }
-    public void insertionSort(int n){
+    public int[] insertionSort(int n){
         //System.out.println("insertionSort");
-        model.createArray(n);
+        int[] array = model.createArray(n);
+        model.doBubbleSort(array);
+        return array;
     }
 
 

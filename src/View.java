@@ -9,6 +9,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
@@ -42,22 +43,20 @@ public class View extends Application {
         bubbleSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                controller.bubbleSort(Integer.valueOf(nValue.getText()));
-                sortStage("Bubble Sort");
+
+                sortStage("Bubble Sort", controller.bubbleSort(Integer.valueOf(nValue.getText())));
             }
         });
         mergeSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                controller.mergeSort(Integer.valueOf(nValue.getText()));
-                sortStage("Merge Sort");
+                sortStage("Merge Sort", controller.mergeSort(Integer.valueOf(nValue.getText())));
             }
         });
         insertionSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                controller.insertionSort(Integer.valueOf(nValue.getText()));
-                sortStage("Insertion Sort");
+                sortStage("Insertion Sort", controller.insertionSort(Integer.valueOf(nValue.getText())));
             }
         });
 
@@ -73,15 +72,23 @@ public class View extends Application {
         primaryStage.show();
     }
 
-    public void sortStage(String sortType){
+    public void sortStage(String sortType, int[] array){
         Stage stage = new Stage();
+        HBox hbox = new HBox();
         VBox vbox = new VBox();
+        //hbox.setAlignment(Pos.CENTER);
         vbox.setAlignment(Pos.CENTER);
-        Scene sortScene = new Scene(vbox, 300, 400);
+        Scene sortScene = new Scene(vbox);
+
+
+        for(int i=0; i < array.length; i++){
+            hbox.getChildren().add(new Rectangle(i*10,vbox.getHeight(),10,20*i));
+
+        }
 
         Button nextStep = new Button("Next Step");
 
-        vbox.getChildren().addAll(nextStep);
+        vbox.getChildren().addAll(hbox, nextStep);
         stage.setTitle(sortType);
         stage.setScene(sortScene);
         stage.show();
