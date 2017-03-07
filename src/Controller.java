@@ -7,28 +7,24 @@ import java.lang.reflect.Array;
  * Created by Eloy on 6-3-2017.
  */
 public class Controller {
-    private  View view;
-    private Model model;
+    private static Model model = new Model();
 
     public Controller(){
 
-        Model model = new Model();
     }
 
     public void bubbleSort(int n){
         //System.out.println("bubbleSort "+n);
+        model.doBubbleSort(model.createArray(n));
 
     }
     public void mergeSort(int n){
         //System.out.println("mergeSort");
+        model.createArray(n);
     }
     public void insertionSort(int n){
         //System.out.println("insertionSort");
-    }
-
-    public Array getArray(){
-        return model.retArray();
-
+        model.createArray(n);
     }
 
 
