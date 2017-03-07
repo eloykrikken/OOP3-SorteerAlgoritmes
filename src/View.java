@@ -16,8 +16,12 @@ import javafx.stage.Stage;
  */
 public class View extends Application {
 
+    public void draw(){
+        Application.launch();
+    }
 
     public void start(Stage primaryStage){
+        Controller controller = new Controller();
 
         BorderPane borderPane = new BorderPane();
         VBox vbox = new VBox();
@@ -34,20 +38,29 @@ public class View extends Application {
         Button mergeSort = new Button("MergeSort");
         Button insertionSort = new Button("InsertionSort");
 
-        /*
+
         bubbleSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) { controller.bubbleSort(); }
+            public void handle(ActionEvent event) {
+                controller.bubbleSort(Integer.valueOf(nValue.getText()));
+                sortStage("Bubble Sort");
+            }
         });
         mergeSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) { controller.mergeSort(); }
+            public void handle(ActionEvent event) {
+                controller.mergeSort(Integer.valueOf(nValue.getText()));
+                sortStage("Merge Sort");
+            }
         });
         insertionSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) { controller.insertionSort(); }
+            public void handle(ActionEvent event) {
+                controller.insertionSort(Integer.valueOf(nValue.getText()));
+                sortStage("Insertion Sort");
+            }
         });
-        */
+
 
         vbox.getChildren().addAll(bubbleSort, mergeSort, insertionSort);
         hbox.getChildren().addAll(nLabel,nValue);
@@ -58,6 +71,20 @@ public class View extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sorting");
         primaryStage.show();
+    }
+
+    public void sortStage(String sortType){
+        Stage stage = new Stage();
+        VBox vbox = new VBox();
+        vbox.setAlignment(Pos.CENTER);
+        Scene sortScene = new Scene(vbox, 300, 400);
+
+        Button nextStep = new Button("Next Step");
+
+        vbox.getChildren().addAll(nextStep);
+        stage.setTitle(sortType);
+        stage.setScene(sortScene);
+        stage.show();
     }
 }
 
