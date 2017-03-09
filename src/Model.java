@@ -17,7 +17,7 @@ public class Model {
         Narray = new int[n];
 
         for(int i=0; i<n; i++){
-            int randnum = (int)(Math.random() * n);
+            int randnum = (int)(Math.random() * (n-1) + 1);
             Narray[i] = randnum;
         }
         //System.out.println(Arrays.toString(Narray));

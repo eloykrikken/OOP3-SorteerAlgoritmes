@@ -6,11 +6,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+import java.util.Arrays;
 
 /**
  * Created by Eloy on 6-3-2017.
@@ -74,24 +75,55 @@ public class View extends Application {
 
     public void sortStage(String sortType, int[] array){
         Stage stage = new Stage();
-        HBox hbox = new HBox();
-        VBox vbox = new VBox();
-        //hbox.setAlignment(Pos.CENTER);
+        BorderPane borderPane = new BorderPane();
+        VBox vbox = new VBox(20);
+
         vbox.setAlignment(Pos.CENTER);
         Scene sortScene = new Scene(vbox);
+        Rectangle[] staafarray = new Rectangle[array.length];
+
+        System.out.println(Arrays.toString(array));
+
+        drawStaaf(array, staafarray, borderPane);
 
 
-        for(int i=0; i < array.length; i++){
-            hbox.getChildren().add(new Rectangle(i*10,vbox.getHeight(),10,20*i));
-
-        }
 
         Button nextStep = new Button("Next Step");
 
-        vbox.getChildren().addAll(hbox, nextStep);
+        vbox.getChildren().addAll(borderPane, nextStep);
         stage.setTitle(sortType);
         stage.setScene(sortScene);
         stage.show();
+    }
+
+    public void drawStaaf(int[] array, Rectangle[] staafarray, BorderPane borderPane){
+        HBox hbox = new HBox();
+        hbox.setAlignment(Pos.BOTTOM_LEFT);
+
+        GridPane arraybox = new GridPane();
+        arraybox.setMinSize(60,20);
+        arraybox.setAlignment(Pos.CENTER);
+
+        ColumnConstraints width = new ColumnConstraints(20);
+
+        for(int i=0; i < array.length; i++){
+
+            Rectangle staaf = new Rectangle(i*20,0,20,10*array[i]);
+            Label label = new Label(Integer.toString(array[i]));
+            staaf.setFill(Color.AQUA);
+            staaf.setStroke(Color.BLACK);
+
+            staafarray[i] = staaf;
+
+            hbox.getChildren().add(staaf);
+            arraybox.getColumnConstraints().add(width);
+            arraybox.add(label, i, 0);
+
+
+        }
+        borderPane.setCenter(hbox);
+        borderPane.setBottom(arraybox);
+
     }
 }
 
