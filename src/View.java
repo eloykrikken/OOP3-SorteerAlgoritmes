@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -9,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -17,13 +19,15 @@ import java.util.Arrays;
  * Created by Eloy on 6-3-2017.
  */
 public class View extends Application {
+    private static Controller controller;
+    private static Boolean finished = false;
 
     public void draw(){
         Application.launch();
     }
 
     public void start(Stage primaryStage){
-        Controller controller = new Controller();
+        controller = new Controller();
 
         BorderPane borderPane = new BorderPane();
         VBox vbox = new VBox();
@@ -44,20 +48,22 @@ public class View extends Application {
         bubbleSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-
                 sortStage("Bubble Sort", controller.bubbleSort(Integer.valueOf(nValue.getText())));
+                primaryStage.close();
             }
         });
         mergeSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 sortStage("Merge Sort", controller.mergeSort(Integer.valueOf(nValue.getText())));
+                primaryStage.close();
             }
         });
         insertionSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 sortStage("Insertion Sort", controller.insertionSort(Integer.valueOf(nValue.getText())));
+                primaryStage.close();
             }
         });
 
@@ -71,6 +77,8 @@ public class View extends Application {
         primaryStage.setScene(scene);
         primaryStage.setTitle("Sorting");
         primaryStage.show();
+
+
     }
 
     public void sortStage(String sortType, int[] array){
@@ -86,14 +94,21 @@ public class View extends Application {
 
         drawStaaf(array, staafarray, borderPane);
 
-
-
         Button nextStep = new Button("Next Step");
+        nextStep.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event){
+                drawStaaf(controller.step(sortType, array), staafarray, borderPane);
+                testFinished();
+            }
+        });
 
         vbox.getChildren().addAll(borderPane, nextStep);
         stage.setTitle(sortType);
         stage.setScene(sortScene);
         stage.show();
+
+
     }
 
     public void drawStaaf(int[] array, Rectangle[] staafarray, BorderPane borderPane){
@@ -125,5 +140,32 @@ public class View extends Application {
         borderPane.setBottom(arraybox);
 
     }
+
+    public void testFinished(){
+        //System.out.println("iets");
+        if(controller.checkFinal()==true){
+            Stage finished = new Stage();
+            BorderPane pane = new BorderPane();
+
+            pane.setCenter(new Text("The sorting is done"));
+            Button exit = new Button("OK");
+            exit.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    Platform.exit();
+                }
+            });
+            pane.setBottom(exit);
+            pane.setAlignment(exit,Pos.BOTTOM_CENTER);
+
+            Scene donescene = new Scene(pane, 200, 100);
+            finished.setResizable(false);
+            finished.setScene(donescene);
+            finished.show();
+        }
+
+    }
+
+
 }
 
