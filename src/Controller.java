@@ -5,14 +5,20 @@
 public class Controller {
     private static Model model = new Model();
     private static Boolean ready = false;
+    private static int[] array;
+    private static int[] lowHigh;
+
+    //private static MergeSort mergeSort = new MergeSort();
 
     public int[] bubbleSort(int n){
         //System.out.println("bubbleSort "+n);
         return model.createArray(n);
     }
-    public int[] mergeSort(int n){
+    public int[] quickSort(int n){
         //System.out.println("mergeSort");
-        return model.createArray(n);
+        array = model.createArray(n);
+        //lowHigh = mergeSort.start(array);
+        return array;
     }
     public int[] insertionSort(int n){
         //System.out.println("insertionSort");
@@ -20,13 +26,13 @@ public class Controller {
     }
     public int[] step(String type, int[] array){
         if(type.equals("Bubble Sort")){
-            array = model.doBubbleSort(array);
+            model.doBubbleSort(array);
         }
-        if(type.equals("Merge Sort")){
-            //model.doMergeSort();
+        if(type.equals("Quick Sort")){
+            //mergeSort.quickSort(lowHigh[0], lowHigh[1]);
         }
         if(type.equals("Insertion Sort")){
-            //model.doInsertionSort();
+            model.doInsertionSort(array);
         }
         return array;
     }

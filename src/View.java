@@ -55,7 +55,7 @@ public class View extends Application {
         mergeSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                sortStage("Merge Sort", controller.mergeSort(Integer.valueOf(nValue.getText())));
+                sortStage("Quick Sort", controller.quickSort(Integer.valueOf(nValue.getText())));
                 primaryStage.close();
             }
         });
