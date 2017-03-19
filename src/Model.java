@@ -20,7 +20,7 @@ public class Model {
             int randnum = (int)(Math.random() * (n-1) + 1);
             array[i] = randnum;
         }
-        System.out.println(Arrays.toString(array));
+        //System.out.println(Arrays.toString(array));
 
         return array;
     }

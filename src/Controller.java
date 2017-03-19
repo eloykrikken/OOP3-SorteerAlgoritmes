@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 /**
  * Created by Eloy on 6-3-2017.
@@ -7,6 +8,7 @@ public class Controller {
     private static Boolean ready = false;
     private static int[] array;
     private static int[] lowHigh;
+    private QuickSort quicksort = new QuickSort();
 
     //private static MergeSort mergeSort = new MergeSort();
 
@@ -17,19 +19,20 @@ public class Controller {
     public int[] quickSort(int n){
         //System.out.println("mergeSort");
         array = model.createArray(n);
-        //lowHigh = mergeSort.start(array);
+        //System.out.println(Arrays.toString(array));
+        quicksort.sort(array);
         return array;
     }
     public int[] insertionSort(int n){
         //System.out.println("insertionSort");
         return model.createArray(n);
     }
-    public int[] step(String type, int[] array){
+    public synchronized int[] step(String type, int[] array){
         if(type.equals("Bubble Sort")){
             model.doBubbleSort(array);
         }
         if(type.equals("Quick Sort")){
-            //mergeSort.quickSort(lowHigh[0], lowHigh[1]);
+            quicksort.sortStep();
         }
         if(type.equals("Insertion Sort")){
             model.doInsertionSort(array);
@@ -37,7 +40,7 @@ public class Controller {
         return array;
     }
     public Boolean checkFinal(){
-        if(model.isDone()==true){
+        if(model.isDone()==true || quicksort.isDone()==true){
             //System.out.println(ready);
             ready = true;
         }

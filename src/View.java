@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -14,6 +15,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static java.lang.Thread.sleep;
 
 /**
  * Created by Eloy on 6-3-2017.
@@ -21,6 +30,14 @@ import java.util.Arrays;
 public class View extends Application {
     private static Controller controller;
     private static Boolean finished = false;
+    private static ScheduledExecutorService executor;
+    private static int[] array;
+    private static String sortType;
+    private static Rectangle[] staafarray;
+    private static BorderPane borderPane = new BorderPane();
+    private static Boolean done = false;
+    private static Lock lock = new ReentrantLock();
+    private static int MAX_THREADS;
 
     public void draw(){
         Application.launch();
@@ -29,7 +46,7 @@ public class View extends Application {
     public void start(Stage primaryStage){
         controller = new Controller();
 
-        BorderPane borderPane = new BorderPane();
+        //BorderPane borderPane = new BorderPane();
         VBox vbox = new VBox();
         HBox hbox = new HBox();
         Scene scene = new Scene(borderPane);
@@ -41,34 +58,44 @@ public class View extends Application {
         TextField nValue = new NumberTextField();
         Label nLabel = new Label("Enter the Value of N: ");
         Button bubbleSort = new Button("BubbleSort");
-        Button mergeSort = new Button("MergeSort");
+        Button quickSort = new Button("QuickSort");
         Button insertionSort = new Button("InsertionSort");
 
 
         bubbleSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                sortStage("Bubble Sort", controller.bubbleSort(Integer.valueOf(nValue.getText())));
+                array = controller.bubbleSort(Integer.valueOf(nValue.getText()));
+                sortType = "Bubble Sort";
+                sortStage(sortType, array);
+                MAX_THREADS = (int)Math.pow(Integer.valueOf(nValue.getText()) , 2);
+                //executor = //hier verder
                 primaryStage.close();
             }
         });
-        mergeSort.setOnAction(new EventHandler<ActionEvent>() {
+        quickSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                sortStage("Quick Sort", controller.quickSort(Integer.valueOf(nValue.getText())));
+                array = controller.quickSort(Integer.valueOf(nValue.getText()));
+                sortType = "Quick Sort";
+                sortStage(sortType, array);
+                MAX_THREADS = (int)Math.pow(Integer.valueOf(nValue.getText()) , 2);
                 primaryStage.close();
             }
         });
         insertionSort.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                sortStage("Insertion Sort", controller.insertionSort(Integer.valueOf(nValue.getText())));
+                array = controller.insertionSort(Integer.valueOf(nValue.getText()));
+                sortType = "Insertion Sort";
+                sortStage(sortType, array);
+                MAX_THREADS = (int)Math.pow(Integer.valueOf(nValue.getText()) , 2);
                 primaryStage.close();
             }
         });
 
 
-        vbox.getChildren().addAll(bubbleSort, mergeSort, insertionSort);
+        vbox.getChildren().addAll(bubbleSort, quickSort, insertionSort);
         hbox.getChildren().addAll(nLabel,nValue);
         borderPane.setTop(hbox);
         borderPane.setCenter(vbox);
@@ -88,7 +115,7 @@ public class View extends Application {
 
         vbox.setAlignment(Pos.CENTER);
         Scene sortScene = new Scene(vbox);
-        Rectangle[] staafarray = new Rectangle[array.length];
+        staafarray = new Rectangle[array.length];
 
         System.out.println(Arrays.toString(array));
 
@@ -102,8 +129,20 @@ public class View extends Application {
                 testFinished();
             }
         });
+        Button autoStep = new Button("Automatic");
+        autoStep.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                for(int i = 0; i<MAX_THREADS; i++) {
+                    executor.schedule(new Autostep(), 1000, TimeUnit.MILLISECONDS);
+                    testFinished();
+                }
+                executor.shutdownNow();
+            }
+        });
 
-        vbox.getChildren().addAll(borderPane, nextStep);
+        stage.setOnCloseRequest(event -> executor.shutdownNow());
+        vbox.getChildren().addAll(borderPane, nextStep, autoStep);
         stage.setTitle(sortType);
         stage.setScene(sortScene);
         stage.show();
@@ -111,7 +150,8 @@ public class View extends Application {
 
     }
 
-    public void drawStaaf(int[] array, Rectangle[] staafarray, BorderPane borderPane){
+    public static synchronized void drawStaaf(int[] array, Rectangle[] staafarray, BorderPane borderPane){
+        System.out.println("Teken");
         HBox hbox = new HBox();
         hbox.setAlignment(Pos.BOTTOM_LEFT);
 
@@ -141,9 +181,10 @@ public class View extends Application {
 
     }
 
-    public void testFinished(){
+    public static synchronized void testFinished(){
         //System.out.println("iets");
-        if(controller.checkFinal()==true){
+        if(controller.checkFinal()==true || done==true){
+            executor.shutdownNow();
             Stage finished = new Stage();
             BorderPane pane = new BorderPane();
 
@@ -152,6 +193,7 @@ public class View extends Application {
             exit.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
+                    executor.shutdownNow();
                     Platform.exit();
                 }
             });
@@ -166,6 +208,32 @@ public class View extends Application {
 
     }
 
+    private static class Autostep implements Runnable {
+        public void main(){
+            Thread t= new Thread(this);
+            t.start();
+        }
+        public void run(){
+            lock.lock();
+            try {
+                //sleep(1000);
+                System.out.println("geslapen");
+                testFinished();
+                System.out.println("Finish getest");
+                drawStaaf(controller.step(sortType, array), staafarray, borderPane);
+                System.out.println("getekend");
+
+            } catch(Exception e){
+                System.out.println("iets ging fout");
+            }
+            //System.out.println(done);
+
+            lock.unlock();
+
+        }
+    }
+
 
 }
+
 
