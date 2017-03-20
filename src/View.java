@@ -30,7 +30,7 @@ import static java.lang.Thread.sleep;
 public class View extends Application {
     private static Controller controller;
     private static Boolean finished = false;
-    private static ScheduledExecutorService executor;
+    private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
     private static int[] array;
     private static String sortType;
     private static Rectangle[] staafarray;
@@ -134,7 +134,30 @@ public class View extends Application {
             @Override
             public void handle(ActionEvent event) {
                 for(int i = 0; i<MAX_THREADS; i++) {
-                    executor.schedule(new Autostep(), 1000, TimeUnit.MILLISECONDS);
+
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run(){
+                            lock.lock();
+
+                            System.out.println("geslapen");
+                            testFinished();
+                            System.out.println("Finish getest");
+                            try {
+                                Thread.sleep(5000);
+                            } catch(InterruptedException e){
+                                System.out.println("Oeps");
+                            }
+                            drawStaaf(controller.step(sortType, array), staafarray, borderPane);
+                            System.out.println("getekend");
+
+
+                            //System.out.println(done);
+
+                            lock.unlock();
+
+                        }
+                    });
                     testFinished();
                 }
                 executor.shutdownNow();
@@ -208,30 +231,12 @@ public class View extends Application {
 
     }
 
-    private static class Autostep implements Runnable {
-        public void main(){
-            Thread t= new Thread(this);
-            t.start();
-        }
-        public void run(){
-            lock.lock();
-            try {
-                //sleep(1000);
-                System.out.println("geslapen");
-                testFinished();
-                System.out.println("Finish getest");
-                drawStaaf(controller.step(sortType, array), staafarray, borderPane);
-                System.out.println("getekend");
+    
 
-            } catch(Exception e){
-                System.out.println("iets ging fout");
-            }
-            //System.out.println(done);
+    //private static class Autostep implements Runnable {
 
-            lock.unlock();
 
-        }
-    }
+    //}
 
 
 }
