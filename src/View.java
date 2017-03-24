@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
@@ -35,6 +37,7 @@ public class View extends Application {
     private static Boolean done = false;
     private static Lock lock = new ReentrantLock();
     private static int MAX_THREADS;
+    private static Timer timer = new Timer();
 
     public void draw(){
         Application.launch();
@@ -127,28 +130,15 @@ public class View extends Application {
         autoStep.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                for(int i = 0; i<MAX_THREADS; i++) {
-
-                    executor.execute(new Runnable() {
+                while(controller.checkFinal()==false) {
+                    timer.schedule(new TimerTask() {
                         @Override
-                        public void run(){
-                            lock.lock();
-
-                            testFinished();
-                            try {
-                                Thread.sleep(5000);
-                            } catch(InterruptedException e){
-                                System.out.println("Slapen mislukt");
-                            }
+                        public void run() {
                             drawStaaf(controller.step(sortType, array), staafarray, borderPane);
-
-                            lock.unlock();
-
                         }
-                    });
-                    testFinished();
+                    }, 100);
                 }
-                executor.shutdownNow();
+                testFinished();
             }
         });
 
